@@ -1,0 +1,33 @@
+:root {
+  --success: #00ffbf;
+  --bg-base: #36332e;
+  --max-width: 600px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+}
+
+body {
+  background: var(--bg-base);
+  height: 100vh;
+  width: 100vw;
+  color: white;
+  font-family: sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+}
+
+a,
+button {
+  -webkit-tap-highlight-color: transparent;
+}
