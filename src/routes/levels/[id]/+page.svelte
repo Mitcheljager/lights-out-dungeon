@@ -3,8 +3,10 @@
 	import type { Vector2 } from "../../../types"
 
   let canvas: HTMLCanvasElement
+  let overlayCanvas: HTMLCanvasElement
   let ctx: CanvasRenderingContext2D | null = null
-  let request: number | null = null
+  let overlayCtx: CanvasRenderingContext2D | null = null
+  let request: number = 0
   let x = $state(150)
   let y = $state(150)
 
@@ -17,12 +19,20 @@
   })
 
   onMount(() => {
+    createOverlayCanvas()
     animate()
   })
 
   onDestroy(() => {
     if (request) cancelAnimationFrame(request)
   })
+
+  function createOverlayCanvas(): void {
+    overlayCanvas = document.createElement("canvas")
+    overlayCtx = overlayCanvas.getContext("2d")
+    overlayCanvas.width = canvas.width
+    overlayCanvas.height = canvas.height
+  }
 
   function animate(): void {
     x = 150 + Math.sin(Date.now() / 500) * 50
@@ -51,19 +61,14 @@
     }
   }
 
-  function draw(): void {
-    if (!ctx) return
-
-    drawGrid()
-
-    const overlayCanvas = document.createElement("canvas")
-    const overlayCtx = overlayCanvas.getContext("2d")
-    overlayCanvas.width = canvas.width
-    overlayCanvas.height = canvas.height
-
+  function drawOverlay(): void {
     if (!overlayCtx) return
 
+    overlayCtx.globalCompositeOperation = "source-over"
+    ctx!.drawImage(overlayCanvas, 0, 0)
+
     // Fill the overlay with black
+    overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height)
     overlayCtx.fillStyle = "black"
     overlayCtx.fillRect(0, 0, canvas.width, canvas.height)
 
@@ -84,9 +89,13 @@
       overlayCtx.arc(computedX, computedY, radius, 0, Math.PI * 2)
       overlayCtx.fill()
     }
+  }
 
-    // Draw the overlay onto the main canvas
-    ctx.drawImage(overlayCanvas, 0, 0)
+  function draw(): void {
+    if (!ctx) return
+
+    drawGrid()
+    drawOverlay()
   }
 </script>
 
