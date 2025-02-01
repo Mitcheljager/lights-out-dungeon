@@ -2,6 +2,7 @@
   import { onMount } from "svelte"
 	import type { GameTime, Vector2 } from "../../../types"
 	import { GameLoop } from "$lib/game"
+	import { DraggableCamera } from "$lib/camera"
 
   let canvas: HTMLCanvasElement
   let overlayCanvas: HTMLCanvasElement
@@ -17,9 +18,11 @@
   onMount(() => {
     createOverlayCanvas()
 
-    const loop = new GameLoop(({ time }) => {
+    const camera = new DraggableCamera(canvas)
+
+    const loop = new GameLoop(canvas, ({ time }) => {
       animate(time)
-      draw()
+      draw(camera)
     })
 
     loop.start()
@@ -43,7 +46,7 @@
     y = 150 + Math.cos(angle) * radius
   }
 
-  function drawGrid(): void {
+  function drawGrid(camera: DraggableCamera): void {
     if (!ctx) return
 
     const tileSize = 50
@@ -51,6 +54,8 @@
     const columns = 20
 
     ctx.clearRect(0, 0, canvas.width, canvas.height)
+    ctx.save()
+    ctx.translate(camera.position.x, camera.position.y)
 
     for (let y = 0; y < rows; y++) {
       for (let x = 0; x < columns; x++) {
@@ -61,9 +66,11 @@
         ctx.strokeRect(x * tileSize, y * tileSize, tileSize, tileSize)
       }
     }
+
+    ctx.restore()
   }
 
-  function drawOverlay(): void {
+  function drawOverlay(camera: DraggableCamera): void {
     if (!overlayCtx) return
 
     overlayCtx.globalCompositeOperation = "source-over"
@@ -76,8 +83,8 @@
 
     const positions: Vector2[] = [{ x: 50, y: 50 }, { x: 200, y: 200 }]
     for (const position of positions) {
-      const computedX = position.x + x
-      const computedY = position.y + y
+      const computedX = position.x + x + camera.position.x
+      const computedY = position.y + y + camera.position.y
 
       // Draw gradient hole on the overlay
       const radius = 100
@@ -93,12 +100,12 @@
     }
   }
 
-  function draw(): void {
+  function draw(camera: DraggableCamera): void {
     if (!canvas) return
     if (!ctx) return
 
-    drawGrid()
-    drawOverlay()
+    drawGrid(camera)
+    drawOverlay(camera)
   }
 </script>
 

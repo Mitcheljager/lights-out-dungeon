@@ -12,11 +12,10 @@ export interface GameTime {
   totalElapsedTime: number
 }
 
-export interface GameCamera {
-  position: Vector2
+export interface GameLoopParams {
+  time: GameTime,
 }
 
-export interface GameParams {
-  time: GameTime,
-  camera: GameCamera
+export interface GameCameraParams {
+  position: Vector2
 }
