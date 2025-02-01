@@ -4,13 +4,14 @@ export class DraggableCamera {
   public position: Vector2 = { x: 0, y: 0 }
 
   private lastMousePosition: Vector2 = { x: 0, y: 0 }
+  private lastMoveTime: number = 0
   private velocity: Vector2 = { x: 0, y: 0 }
   private isDragging: boolean = false
   private request: number = 0
 
   constructor(
     private canvas: HTMLCanvasElement,
-    private friction: number = 0.95
+    private friction: number = 0.97
   ) {
     this.bindCameraControls()
   }
@@ -44,13 +45,17 @@ export class DraggableCamera {
 
     this.lastMousePosition.x = event.clientX
     this.lastMousePosition.y = event.clientY
+
+    if (deltaX || deltaY) this.lastMoveTime = performance.now()
   }
 
   private up = (): void => {
     if (!this.isDragging) return
 
     this.isDragging = false
-    this.applyMomentum()
+
+    if (performance.now() - this.lastMoveTime > 100) this.stopMomentum()
+    else this.applyMomentum()
   }
 
   private applyMomentum(): void {
@@ -61,7 +66,7 @@ export class DraggableCamera {
       this.position.x += this.velocity.x
       this.position.y += this.velocity.y
 
-      if (Math.abs(this.velocity.x) > 0.01 || Math.abs(this.velocity.y) > 0.01) {
+      if (Math.abs(this.velocity.x) > 0.1 || Math.abs(this.velocity.y) > 0.1) {
         this.request = requestAnimationFrame(frame)
       }
     }
