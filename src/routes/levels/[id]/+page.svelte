@@ -1,8 +1,10 @@
 <script lang="ts">
   import { onMount } from "svelte"
-	import type { GameTime, Vector2 } from "../../../types"
+	import type { Entity, GameTime, Vector2 } from "../../../types"
 	import { GameLoop } from "$lib/game"
-	import { DraggableCamera } from "$lib/camera"
+	import { DraggableCamera } from "$lib/DraggableCamera"
+
+  const entities: Entity[] = [{ position: { x: 0, y: 0 } }]
 
   let canvas: HTMLCanvasElement
   let overlayCanvas: HTMLCanvasElement
@@ -18,7 +20,7 @@
   onMount(() => {
     createOverlayCanvas()
 
-    const camera = new DraggableCamera(canvas)
+    const camera = new DraggableCamera(canvas, ctx!)
 
     const loop = new GameLoop(canvas, ({ time }) => {
       animate(time)
@@ -46,16 +48,12 @@
     y = 150 + Math.cos(angle) * radius
   }
 
-  function drawGrid(camera: DraggableCamera): void {
+  function drawGrid(): void {
     if (!ctx) return
 
     const tileSize = 50
     const rows = 20
     const columns = 20
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
-    ctx.save()
-    ctx.translate(camera.position.x, camera.position.y)
 
     for (let y = 0; y < rows; y++) {
       for (let x = 0; x < columns; x++) {
@@ -66,8 +64,15 @@
         ctx.strokeRect(x * tileSize, y * tileSize, tileSize, tileSize)
       }
     }
+  }
 
-    ctx.restore()
+  function drawEntities(): void {
+    if (!ctx) return
+
+    for (const { position } of entities) {
+      ctx.fillStyle = "blue"
+      ctx.fillRect(position.x, position.y, 20, 20)
+    }
   }
 
   function drawOverlay(camera: DraggableCamera): void {
@@ -103,10 +108,11 @@
   }
 
   function draw(camera: DraggableCamera): void {
-    if (!canvas) return
-    if (!ctx) return
+    camera.translateWith(() => {
+      drawGrid()
+      drawEntities()
+    })
 
-    drawGrid(camera)
     drawOverlay(camera)
   }
 </script>

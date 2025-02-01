@@ -19,3 +19,7 @@ export interface GameLoopParams {
 export interface GameCameraParams {
   position: Vector2
 }
+
+export interface Entity {
+  position: Vector2
+}

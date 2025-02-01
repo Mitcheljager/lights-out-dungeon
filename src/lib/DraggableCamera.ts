@@ -12,9 +12,19 @@ export class DraggableCamera {
 
   constructor(
     private canvas: HTMLCanvasElement,
+    private ctx: CanvasRenderingContext2D,
     private friction: number = 0.97
   ) {
     this.bindCameraControls()
+  }
+
+  translateWith(callback: () => void): void {
+    this.ctx.save()
+    this.ctx.translate(this.position.x, this.position.y)
+
+    callback()
+
+    this.ctx.restore()
   }
 
   private bindCameraControls(): void {
