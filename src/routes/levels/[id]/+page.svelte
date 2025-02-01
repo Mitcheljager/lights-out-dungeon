@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onDestroy, onMount } from "svelte"
-	import type { Position } from "../../../types"
+	import type { Vector2 } from "../../../types"
 
   let canvas: HTMLCanvasElement
   let ctx: CanvasRenderingContext2D | null = null
@@ -67,7 +67,7 @@
     overlayCtx.fillStyle = "black"
     overlayCtx.fillRect(0, 0, canvas.width, canvas.height)
 
-    const positions: Position[] = [{ x: 50, y: 50 }, { x: 200, y: 200 }]
+    const positions: Vector2[] = [{ x: 50, y: 50 }, { x: 200, y: 200 }]
     for (const position of positions) {
       const computedX = position.x + x
       const computedY = position.y + y
