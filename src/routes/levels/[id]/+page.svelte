@@ -83,19 +83,21 @@
 
     const positions: Vector2[] = [{ x: 50, y: 50 }, { x: 200, y: 200 }]
     for (const position of positions) {
-      const computedX = position.x + x + camera.position.x
-      const computedY = position.y + y + camera.position.y
+      const computed: Vector2 = {
+        x: position.x + x + camera.position.x,
+        y: position.y + y + camera.position.y
+      }
 
       // Draw gradient hole on the overlay
       const radius = 100
-      const gradient = overlayCtx.createRadialGradient(computedX, computedY, 20, computedX, computedY, radius)
+      const gradient = overlayCtx.createRadialGradient(computed.x, computed.y, 20, computed.x, computed.y, radius)
       gradient.addColorStop(0, "rgba(0, 0, 0, 1)")
       gradient.addColorStop(1, "rgba(0, 0, 0, 0)")
 
       overlayCtx.fillStyle = gradient
       overlayCtx.globalCompositeOperation = "destination-out"
       overlayCtx.beginPath()
-      overlayCtx.arc(computedX, computedY, radius, 0, Math.PI * 2)
+      overlayCtx.arc(computed.x, computed.y, radius, 0, Math.PI * 2)
       overlayCtx.fill()
     }
   }

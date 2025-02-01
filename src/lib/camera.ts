@@ -1,4 +1,5 @@
 import type { Vector2 } from "../types"
+import { magnitudeOf } from "./vector"
 
 export class DraggableCamera {
   public position: Vector2 = { x: 0, y: 0 }
@@ -34,19 +35,24 @@ export class DraggableCamera {
   private move = (event: MouseEvent): void => {
     if (!this.isDragging) return
 
-    const deltaX = event.clientX - this.lastMousePosition.x
-    const deltaY = event.clientY - this.lastMousePosition.y
+    const rect = this.canvas.getBoundingClientRect()
+    const scale: Vector2 = { x: this.canvas.width / rect.width, y: this.canvas.height / rect.height }
 
-    this.position.x += deltaX
-    this.position.y += deltaY
+    const delta: Vector2 = {
+      x: (event.clientX - this.lastMousePosition.x) * scale.x,
+      y: (event.clientY - this.lastMousePosition.y) * scale.y
+    }
 
-    this.velocity.x = deltaX
-    this.velocity.y = deltaY
+    this.position.x += delta.x
+    this.position.y += delta.y
+
+    this.velocity.x = delta.x
+    this.velocity.y = delta.y
 
     this.lastMousePosition.x = event.clientX
     this.lastMousePosition.y = event.clientY
 
-    if (deltaX || deltaY) this.lastMoveTime = performance.now()
+    if (magnitudeOf(delta)) this.lastMoveTime = performance.now()
   }
 
   private up = (): void => {
