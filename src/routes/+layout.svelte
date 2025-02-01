@@ -1,6 +1,7 @@
 <script>
   import "$lib/global.css"
 	import { language, setLanguage } from "$lib/language"
+	import { Capacitor } from "@capacitor/core"
 	import { onMount } from "svelte"
 
   const { children } = $props()
@@ -8,6 +9,11 @@
   let loading = $state(true)
 
   onMount(async() => {
+    if (!Capacitor.isNativePlatform()) {
+      loading = false
+      return
+    }
+
     try {
       const { AndroidFullScreen } = await import("@awesome-cordova-plugins/android-full-screen")
       AndroidFullScreen.isImmersiveModeSupported().then(() => AndroidFullScreen.immersiveMode())

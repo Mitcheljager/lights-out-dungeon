@@ -1,2 +1,3 @@
-// @ts-expect-error todo
-export const levels = []
+export const levels = [{
+  id: 1
+}]
