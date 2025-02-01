@@ -17,7 +17,7 @@
   onMount(() => {
     createOverlayCanvas()
 
-    const loop = new GameLoop((time) => {
+    const loop = new GameLoop(({ time }) => {
       animate(time)
       draw()
     })
@@ -71,7 +71,7 @@
 
     // Fill the overlay with black
     overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height)
-    overlayCtx.fillStyle = "black"
+    overlayCtx.fillStyle = "rgba(0, 0, 0, 0.9)"
     overlayCtx.fillRect(0, 0, canvas.width, canvas.height)
 
     const positions: Vector2[] = [{ x: 50, y: 50 }, { x: 200, y: 200 }]

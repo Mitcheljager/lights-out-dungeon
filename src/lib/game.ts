@@ -1,24 +1,27 @@
-import type { GameTime } from "../types"
+import type { GameCamera, GameParams, GameTime } from "../types"
 
 export class GameLoop {
-  private callback: (params: GameTime) => void
+  private callback: (params: GameParams) => void
   private request: number = 0
   private lastTime: number = 0
   private totalElapsedTime: number = 0
 
-  constructor(callback: (params: GameTime) => void) {
+  constructor(callback: (params: GameParams) => void) {
     this.callback = callback
   }
 
   start(): void {
     if (this.request) return
 
-    const frame = (time: number): void => {
-      const frametime = (time - this.lastTime) / 1000
+    const frame = (currentTime: number): void => {
+      const frametime = (currentTime - this.lastTime) / 1000
       this.totalElapsedTime += frametime
-      this.lastTime = time
+      this.lastTime = currentTime
 
-      this.callback({ totalElapsedTime: this.totalElapsedTime, frametime })
+      const time: GameTime = { totalElapsedTime: this.totalElapsedTime, frametime }
+      const camera: GameCamera = { position: { x: 0, y: 0 } }
+
+      this.callback({ time, camera })
       this.request = requestAnimationFrame(frame)
     }
 
