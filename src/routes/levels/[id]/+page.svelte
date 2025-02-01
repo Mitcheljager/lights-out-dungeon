@@ -1,12 +1,12 @@
 <script lang="ts">
-  import { onDestroy, onMount } from "svelte"
-	import type { Vector2 } from "../../../types"
+  import { onMount } from "svelte"
+	import type { GameTime, Vector2 } from "../../../types"
+	import { GameLoop } from "$lib/game"
 
   let canvas: HTMLCanvasElement
   let overlayCanvas: HTMLCanvasElement
   let ctx: CanvasRenderingContext2D | null = null
   let overlayCtx: CanvasRenderingContext2D | null = null
-  let request: number = 0
   let x = $state(150)
   let y = $state(150)
 
@@ -14,17 +14,17 @@
     if (canvas) ctx = canvas.getContext("2d")
   })
 
-  $effect(() => {
-    if (x || y) draw()
-  })
-
   onMount(() => {
     createOverlayCanvas()
-    animate()
-  })
 
-  onDestroy(() => {
-    if (request) cancelAnimationFrame(request)
+    const loop = new GameLoop((time) => {
+      animate(time)
+      draw()
+    })
+
+    loop.start()
+
+    return (): void => loop.destroy()
   })
 
   function createOverlayCanvas(): void {
@@ -34,11 +34,13 @@
     overlayCanvas.height = canvas.height
   }
 
-  function animate(): void {
-    x = 150 + Math.sin(Date.now() / 500) * 50
-    y = 150 + Math.cos(Date.now() / 500) * 50
+  function animate(time: GameTime): void {
+    const speed = 2 * Math.PI / 2
+    const angle = time.totalElapsedTime * speed
+    const radius = 50
 
-    request = requestAnimationFrame(animate)
+    x += time.frametime * 10
+    y = 150 + Math.cos(angle) * radius
   }
 
   function drawGrid(): void {
@@ -92,6 +94,7 @@
   }
 
   function draw(): void {
+    if (!canvas) return
     if (!ctx) return
 
     drawGrid()
