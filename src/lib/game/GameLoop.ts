@@ -5,12 +5,7 @@ export class GameLoop {
   private lastTime: number = 0
   private totalElapsedTime: number = 0
 
-  constructor(
-    private canvas: HTMLCanvasElement,
-    private callback: (params: GameLoopParams) => void
-  ) {
-
-  }
+  constructor(private callback: (params: GameLoopParams) => void) {}
 
   start(): void {
     if (this.request) return

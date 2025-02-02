@@ -33,7 +33,7 @@
 
     const camera = new DraggableCamera(canvas, ctx!)
 
-    const loop = new GameLoop(canvas, ({ time }) => {
+    const loop = new GameLoop(({ time }) => {
       animate(time)
       draw(camera)
     })
