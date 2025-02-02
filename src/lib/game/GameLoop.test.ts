@@ -1,5 +1,7 @@
-import { describe } from "vitest"
+import { describe, expect, it } from "vitest"
 
-describe("game.ts", () => {
-
+describe("GameLoop.ts", () => {
+  it("Should return true", () => {
+    expect(true).toBeTruthy()
+  })
 })
