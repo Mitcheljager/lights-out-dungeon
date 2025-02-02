@@ -1,8 +1,8 @@
 <script lang="ts">
   import { onMount } from "svelte"
 	import type { Entity, GameTime, Tile, Tiles, Vector2 } from "../../../types"
-	import { GameLoop } from "$lib/game"
-	import { DraggableCamera } from "$lib/DraggableCamera"
+	import { GameLoop } from "$lib/game/GameLoop"
+	import { DraggableCamera } from "$lib/game/DraggableCamera"
 	import { TileType } from "$lib/enums/TileType"
 	import { TileFill } from "$lib/enums/TileFill"
 

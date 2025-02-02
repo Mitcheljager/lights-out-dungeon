@@ -1,4 +1,4 @@
-import type { GameLoopParams, GameTime } from "../types"
+import type { GameLoopParams, GameTime } from "../../types"
 
 export class GameLoop {
   private request: number = 0

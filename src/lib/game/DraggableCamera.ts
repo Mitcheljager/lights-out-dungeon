@@ -1,5 +1,5 @@
-import type { Vector2 } from "../types"
-import { magnitudeOf } from "./vector"
+import type { Vector2 } from "../../types"
+import { magnitudeOf } from "../utils/vector"
 
 export class DraggableCamera {
   public position: Vector2 = { x: 0, y: 0 }
