@@ -1,9 +1,20 @@
 <script lang="ts">
   import { onMount } from "svelte"
-	import type { Entity, GameTime, Vector2 } from "../../../types"
+	import type { Entity, GameTime, Tile, Tiles, Vector2 } from "../../../types"
 	import { GameLoop } from "$lib/game"
 	import { DraggableCamera } from "$lib/DraggableCamera"
+	import { TileType } from "$lib/enums/TileType"
+	import { TileFill } from "$lib/enums/TileFill"
 
+  const gridCellSize = 50
+  const gridRows = 20
+  const gridColumns = 20
+  const tiles: Tiles = {
+    "1x2": { type: TileType.Floor, variant: 0 },
+    "4x6": { type: TileType.Floor, variant: 0 },
+    "2x3": { type: TileType.Wall, variant: 0 },
+    "2x4": { type: TileType.Void, variant: 0 }
+  }
   const entities: Entity[] = [{ position: { x: 0, y: 0 } }]
 
   let canvas: HTMLCanvasElement
@@ -51,17 +62,16 @@
   function drawGrid(): void {
     if (!ctx) return
 
-    const tileSize = 50
-    const rows = 20
-    const columns = 20
+    for (let y = 0; y < gridRows; y++) {
+      for (let x = 0; x < gridColumns; x++) {
+        const matchingTile: Tile = tiles[`${x}x${y}`]
+        const checkerboardTile: string = ((x + y) % 2 === 0 ? "#ddd" : "#bbb")
 
-    for (let y = 0; y < rows; y++) {
-      for (let x = 0; x < columns; x++) {
-        ctx.fillStyle = (x + y) % 2 === 0 ? "#ddd" : "#bbb" // Checkerboard pattern
-        ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize)
+        ctx.fillStyle = TileFill[matchingTile?.type] || checkerboardTile
+        ctx.fillRect(x * gridCellSize, y * gridCellSize, gridCellSize, gridCellSize)
 
         ctx.strokeStyle = "#888"
-        ctx.strokeRect(x * tileSize, y * tileSize, tileSize, tileSize)
+        ctx.strokeRect(x * gridCellSize, y * gridCellSize, gridCellSize, gridCellSize)
       }
     }
   }
@@ -71,7 +81,7 @@
 
     for (const { position } of entities) {
       ctx.fillStyle = "blue"
-      ctx.fillRect(position.x, position.y, 20, 20)
+      ctx.fillRect(position.x, position.y, gridCellSize, gridCellSize)
     }
   }
 
@@ -81,9 +91,9 @@
     overlayCtx.globalCompositeOperation = "source-over"
     ctx!.drawImage(overlayCanvas, 0, 0)
 
-    // Fill the overlay with black
+    // Draw black square over the entire canvas
     overlayCtx.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height)
-    overlayCtx.fillStyle = "rgba(0, 0, 0, 0.9)"
+    overlayCtx.fillStyle = "rgba(0, 0, 0, 0.5)"
     overlayCtx.fillRect(0, 0, canvas.width, canvas.height)
 
     const positions: Vector2[] = [{ x: 50, y: 50 }, { x: 200, y: 200 }]
@@ -93,7 +103,7 @@
         y: position.y + y + camera.position.y
       }
 
-      // Draw gradient hole on the overlay
+      // Cut a hole using a gradient
       const radius = 100
       const gradient = overlayCtx.createRadialGradient(computed.x, computed.y, 20, computed.x, computed.y, radius)
       gradient.addColorStop(0, "rgba(0, 0, 0, 1)")

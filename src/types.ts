@@ -1,3 +1,5 @@
+import type { TileType } from "$lib/enums/TileType"
+
 export interface Level {
   id: string,
 }
@@ -22,4 +24,13 @@ export interface GameCameraParams {
 
 export interface Entity {
   position: Vector2
+}
+
+export interface Tile {
+  type: TileType,
+  variant: number,
+}
+
+export interface Tiles {
+  [key: string]: Tile
 }
