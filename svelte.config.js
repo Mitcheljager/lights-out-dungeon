@@ -1,6 +1,6 @@
 import adapter from "@sveltejs/adapter-static"
 import { sveltePreprocess  } from "svelte-preprocess"
-import { levels } from "./src/lib/levels.js"
+import { levels } from "./src/lib/data/levels.js"
 
 const dev = process.argv.includes("dev")
 
